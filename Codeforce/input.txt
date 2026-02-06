@@ -1,8 +1,15 @@
-1
+7
 6
--6 5
--4 10
--10 -1
--8 2
-0 7
--7 -5
+aaabcc
+10
+aaaaaaaaaa
+6
+abcdef
+7
+abacaba
+6
+cccfff
+4
+abba
+5
+ababa
