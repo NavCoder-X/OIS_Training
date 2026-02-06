@@ -34,12 +34,8 @@ run: build
 
 # Esegui un programma specifico: make run-filename
 run-%: %.exe
-	@if [ -f "$<" ]; then \
-		./$< < input.txt > output.txt; \
-		echo "Output di $< salvato in output.txt"; \
-	else \
-		echo "File $< non trovato"; \
-	fi
+	@./$< < input.txt > output.txt
+	@echo "Output di $< salvato in output.txt"
 
 # Esegui interattivamente il primo programma
 interactive: build
