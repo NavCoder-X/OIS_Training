@@ -2,9 +2,9 @@ from copy import deepcopy
 from time import sleep
 
 # scacchiera 
-empty = 0
-regina = 1
-N = 5
+EMPTY = 0
+REGINA = 1
+N = 15
 scacchiera = []
 for i in range(N):
     scacchiera.append([0]*N)
@@ -18,7 +18,7 @@ def printScacchiera(scacchiera):
     for i in range(n):
         # Stampa riga con le regine
         for j in range(n):
-            if scacchiera[i][j] == regina:
+            if scacchiera[i][j] == REGINA:
                 print(f"│ ♛  ", end="")
             else:
                 print(f"│    ", end="")
@@ -35,79 +35,60 @@ def printScacchiera(scacchiera):
 def isSottoAtacco(scacchiera, i, j):
     # non controllo la riga , sono sicuro che non ci sia nessuna regina la
     # controllo la colonna
-    k = 0
     for k in range(len(scacchiera)):
-        if(scacchiera[k][j] == regina and i != k):
+        if scacchiera[k][j] == REGINA and i != k:
             return True
         
-    # controllo sotto la diagonale principale
-    k,l = i,j
-    while(l >= 0 and k < len(scacchiera)):
-        if(scacchiera[k][l] == regina and (k != i or l != j)):
-            return True
-        k+=1
-        l-=1
-        
-    # controllo sopra la diagonale principale
-    k,l = i,j
-    while(k >= 0 and l < len(scacchiera)):
-        if(scacchiera[k][l] == regina and (k != i or l != j)):
-            return True
-        k-=1
-        l+=1
-        
-    # controllo sopra la diagonale secondaria
-    k,l = i,j
-    while(k >= 0 and l >= 0):
-        if(scacchiera[k][l] == regina and (k != i or l != j)):
-            return True
-        k-=1
-        l-=1
+
+    da_controllare = (
+        list(zip(range(i + 1, len(scacchiera)), range(j + 1, len(scacchiera)))) + # sotto la principale
+        list(zip(range(i - 1, -1, -1), range(j - 1, -1, -1))) + # sopra la principale
+        list(zip(range(i + 1, len(scacchiera)), range(j - 1, -1, -1))) + # sotto la secondaria
+        list(zip(range(i - 1, -1, -1), range(j + 1, len(scacchiera))))) # sopra la secondaria
     
-    # controllo sotto la diagonale secondaria
-    k,l = i,j
-    while(k < len(scacchiera) and l < len(scacchiera)):
-        if(scacchiera[k][l] == regina and (k != i or l != j)):
+    # print(da_controllare)
+        
+    for k, l in da_controllare:
+        if scacchiera[k][l] == REGINA:
             return True
-        l+=1
-        k+=1
 
 
     return False
 
 soluzioni = []
 def poszioneRegina(scacchiera, n, punto_massimo = len(scacchiera)):
+    print("\033[H\033[J", end="")
     printScacchiera(scacchiera)
     input()
     # sleep(0.1)
-    print("\033[H\033[J", end="")
     
-    if(n == punto_massimo):
+    if n == punto_massimo:
         soluzioni.append(deepcopy(scacchiera))
         return
     
     for j in range(len(scacchiera)):
-        if(not isSottoAtacco(scacchiera,n,j)):
-            scacchiera[n][j] = regina
+        if not isSottoAtacco(scacchiera,n,j):
+            scacchiera[n][j] = REGINA
             poszioneRegina(scacchiera,n+1,punto_massimo)
-            scacchiera[n][j] = empty
+            scacchiera[n][j] = EMPTY
 
     return
 
 def posizioneRegineN(scacchiera, n):
     # funzione per posizionare meno di len(scacchiera regine)
-    if(n == 0):
+    if n == 0:
         soluzioni.append(deepcopy(scacchiera))
         return
     
-    if(n > len(scacchiera)):
+    if n > len(scacchiera) :
         print("Errore: n deve essere minore o uguale alla dimensione della scacchiera.")
         return
     
     for i in range(len(scacchiera)-n+1):
         poszioneRegina(scacchiera,i,i+n)
 
-posizioneRegineN(scacchiera, 4)
-print(f"Soluzioni trovate: {len(soluzioni)}")
+
+posizioneRegineN(scacchiera, N)
 for soluzione in soluzioni:
     printScacchiera(soluzione)
+print(f"Soluzioni trovate: {len(soluzioni)}")
