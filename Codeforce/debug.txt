@@ -1,8 +1,14 @@
- | n = 4 | q = 4
-
- | os = { {1, 0} {2, 1} {3, 2} {4, 3} }
-
- | os = { {1, 0} {1, 4} {2, 1} {3, 2} {4, 3} }
- | os = { {1, 0} {1, 4} {2, 1} {2, 5} {3, 2} {4, 3} }
- | os = { {1, 0} {1, 4} {2, 1} {2, 5} {3, 2} {3, 6} {4, 3} }
- | os = { {1, 4} {2, 1} {2, 5} {3, 2} {3, 6} {4, 3} }
+ | worms = [ 2 7 3 4 9 ]
+ | sum = [ 2 9 12 16 25 ]
+ | mid = 2 | sum[mid] = 12 | goods[i] = 1
+ | answer = 5
+ | mid = 0 | sum[mid] = 2 | goods[i] = 1
+ | answer = 3
+ | mid = 2 | sum[mid] = 12 | goods[i] = 25
+ | mid = 4 | sum[mid] = 25 | goods[i] = 25
+ | answer = 5
+ | mid = 3 | sum[mid] = 16 | goods[i] = 25
+ | mid = 2 | sum[mid] = 12 | goods[i] = 11
+ | answer = 5
+ | mid = 0 | sum[mid] = 2 | goods[i] = 11
+ | mid = 1 | sum[mid] = 9 | goods[i] = 11
