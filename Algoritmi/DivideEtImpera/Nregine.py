@@ -4,7 +4,7 @@ from time import sleep
 # scacchiera 
 EMPTY = 0
 REGINA = 1
-N = 15
+N = 8
 scacchiera = []
 for i in range(N):
     scacchiera.append([0]*N)
@@ -59,7 +59,7 @@ soluzioni = []
 def poszioneRegina(scacchiera, n, punto_massimo = len(scacchiera)):
     print("\033[H\033[J", end="")
     printScacchiera(scacchiera)
-    input()
+    # input()
     # sleep(0.1)
     
     if n == punto_massimo:
