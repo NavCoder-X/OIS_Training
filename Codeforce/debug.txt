@@ -1,14 +1,25 @@
- | worms = [ 2 7 3 4 9 ]
- | sum = [ 2 9 12 16 25 ]
- | mid = 2 | sum[mid] = 12 | goods[i] = 1
- | answer = 5
- | mid = 0 | sum[mid] = 2 | goods[i] = 1
- | answer = 3
- | mid = 2 | sum[mid] = 12 | goods[i] = 25
- | mid = 4 | sum[mid] = 25 | goods[i] = 25
- | answer = 5
- | mid = 3 | sum[mid] = 16 | goods[i] = 25
- | mid = 2 | sum[mid] = 12 | goods[i] = 11
- | answer = 5
- | mid = 0 | sum[mid] = 2 | goods[i] = 11
- | mid = 1 | sum[mid] = 9 | goods[i] = 11
+ | minCandy = 3 | minOrange = 2
+ | candies[i] = 3 | oranges[i] = 3 | c = 0
+ | candies[i] = 5 | oranges[i] = 2 | c = 1
+ | candies[i] = 6 | oranges[i] = 3 | c = 3
+ | minCandy = 1 | minOrange = 1
+ | candies[i] = 1 | oranges[i] = 5 | c = 0
+ | candies[i] = 2 | oranges[i] = 4 | c = 4
+ | candies[i] = 3 | oranges[i] = 3 | c = 7
+ | candies[i] = 4 | oranges[i] = 2 | c = 9
+ | candies[i] = 5 | oranges[i] = 1 | c = 12
+ | minCandy = 1 | minOrange = 2
+ | candies[i] = 1 | oranges[i] = 2 | c = 0
+ | candies[i] = 1 | oranges[i] = 2 | c = 0
+ | candies[i] = 1 | oranges[i] = 2 | c = 0
+ | minCandy = 1 | minOrange = 1
+ | candies[i] = 1 | oranges[i] = 1 | c = 0
+ | candies[i] = 1000000000 | oranges[i] = 1 | c = 0
+ | candies[i] = 1000000000 | oranges[i] = 1 | c = 999999999
+ | candies[i] = 1000000000 | oranges[i] = 1 | c = 1999999998
+ | candies[i] = 1000000000 | oranges[i] = 1 | c = 2999999997
+ | candies[i] = 1000000000 | oranges[i] = 1 | c = 3999999996
+ | minCandy = 8 | minOrange = 4
+ | candies[i] = 10 | oranges[i] = 7 | c = 0
+ | candies[i] = 12 | oranges[i] = 5 | c = 3
+ | candies[i] = 8 | oranges[i] = 4 | c = 7
