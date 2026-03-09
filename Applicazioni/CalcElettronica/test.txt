@@ -1,0 +1,41 @@
+# variabili 
+r = 2
+a = b = 0
+x = 2.2
+r1 = 10*2
+r2 = r1*2
+r3 = 1+2*2/2^2+r
+exp = 10**-9
+1-1
+-1
+
+# operatori
+p = 27|270
+x = p|x
+fattoriale = 5!
+fattroiale_x = 5!! # doppio fattoriale
+potenza = P>12,2
+i1 = PC>r,2,3
+v1 = PT>1,2,2
+px = PLL>10,20,30
+valore_assouluto = ABS>(3-100)
+radice = SQRT>16
+radice4 = SQRT>246,ris
+logaritmo = LOG>1000
+logaritmo2 = LOG2>1024
+logaritmo7 = LOG>49,7
+seno = SIN>(pi/2)
+coseno = COS>pi
+tangente = TAN>(pi/4)
+arcoseno = ASIN>1
+arcocoseno = ACOS>0
+arcotangente = ATAN>1
+gradi = DEG>pi/2
+radianti = RAD>90
+mcd = GCD>18,12
+mcm = LCM>18,12
+ipotenusa = HYPOT>3,4
+
+
+
+

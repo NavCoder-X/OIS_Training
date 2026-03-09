@@ -1,6 +1,8 @@
 from colorama import Fore, Style, init
+from src.config import *
 from enum import Enum
 import ast
+import os
 
 # ===== CUSTOM EXCEPTIONS =====
 class InvalidExpressionError(Exception):
@@ -15,35 +17,6 @@ class MatrixDimensionError(Exception):
     """Eccezione per dimensioni matrice non corrette."""
     pass
 
-# ===== CONFIG CLASS =====
-class Config:
-    """Classe centrale per configurazione costanti del programma."""
-    
-    # Operatori supportati
-    OPERATORI = set("+-*/^()|>=%")
-    OPERATORI_SPECIALI = set("|>")
-    
-    # Nomi operatori speciali
-    class SpecialOperators(Enum):
-        POWER = "P"                    # Potenza
-        CURRENT_DIVIDER = "PC"         # Partitore di corrente
-        VOLTAGE_DIVIDER = "PT"         # Partitore di tensione
-        KRAMER = "KRAMER"              # Risolutore sistemi 3x3
-    
-    NOMI_OPERATORI_SPECIALI = set([m.value for m in SpecialOperators])
-    NOMI_NON_VALIDI = set(["exit", "show", "help", "clear"] + list(NOMI_OPERATORI_SPECIALI))
-    
-    # Costanti di sistema
-    KRAMER_PARAMS = 12                 # Numero parametri per Kramer (3 eq x 4 valori)
-    KRAMER_EQUATIONS = 3               # Numero equazioni Kramer
-    KRAMER_COEFFICIENTS = 4            # Coefficienti per equazione (x, y, z, d)
-    MIN_RESISTANCES = 2                # Numero minimo resistenze necessario
-
-# Alias 
-OPERATORI = Config.OPERATORI
-OPERATORI_SPECIALI = Config.OPERATORI_SPECIALI
-NOMI_OPERATORI_SPECIALI = Config.NOMI_OPERATORI_SPECIALI
-NOMI_NON_VALIDI = Config.NOMI_NON_VALIDI
 
 def togliSpazi(s : str) -> str:
     return s.replace(" ","")
@@ -152,7 +125,7 @@ def convertiVariabili(tokens : list[str], variabili : dict) -> list[str] | None:
         token = tokens[i]
         if token in variabili:
             new_tokens.append(str(variabili[token]))
-        elif token in OPERATORI or is_number(token) or ',' in token:
+        elif token in OPERATORI or is_number(token) or ',' in token or token in NOMI_OPERATORI_SPECIALI:
             new_tokens.append(token)
         else:
             raise InvalidVariableError(f"Variabile non definita: '{token}'")
@@ -224,3 +197,29 @@ def KramerInput(variabili : dict) -> list[list[float]] | None:
             return None
     
     return equazioni
+
+def togliCommenti(s : str):
+    return s.split(Config.CustomOperators.COMMENTO.value)[0].strip()
+
+def salvaSessione(variabili : dict):
+    nomeSessione = input(Fore.CYAN + "nome Sessione: ")
+    if nomeSessione and validaNomeVariabile(nomeSessione):
+        with open(f"{nomeSessione}.{Config.ESTENSIONE_SESSIONE}", "w") as f:
+            for var, val in variabili.items():
+                if val > 999999999999 or val < -999999999999:
+                    print(Fore.YELLOW + f"Attenzione: la variabile '{var}' ha un valore troppo grande per essere salvato correttamente.")
+                f.write(f"{var}={val}\n")
+        print(Fore.GREEN + f"Sessione '{nomeSessione}' salvata con successo.")
+    else:
+        print(Fore.RED + "Nome sessione non valido")
+
+def listSessioni(path = None):
+    if path is None:
+        path = os.getcwd()
+    if os.path.exists(path):
+        for file in os.listdir(path):
+            if file.endswith(f".{Config.ESTENSIONE_SESSIONE}"):
+                print(Fore.GREEN + file)
+
+    else:
+        print(Fore.RED + "Path non valido")

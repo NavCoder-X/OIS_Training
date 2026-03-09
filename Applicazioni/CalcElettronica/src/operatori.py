@@ -1,6 +1,8 @@
+from math import factorial
+
 from colorama import Fore, Style, init
-from Headers import *
-from utilities import *
+from src.Headers import *
+from src.utilities import *
 
 def Kramer3x3(equazioni = None):
     # input in formato matrice 3x3
@@ -85,3 +87,48 @@ def partitoreCorrente(R1 : float, R2 : float, Iin : float):
 
 def potenza(V : float, I : float):
     return V * I
+
+def customSqrt(x : float, n : int):
+    if x < 0:
+        print(Fore.RED + "Errore: Impossibile calcolare la radice di un numero negativo.")
+        return None
+    if n <= 0:
+        print(Fore.RED + "Errore: L'indice della radice deve essere un intero positivo.")
+        return None
+    l = 0
+    r = x
+    esp = 10**(-11)
+    while r-l > esp:
+        mid = (l+r)/2
+        mifìd_pow = mid**n
+        if mifìd_pow < x:
+            l = mid
+        else:
+            r = mid
+
+    return l
+
+def divisori(n : int):
+    n = abs(n)
+    if n == 1:
+        return [1]
+    
+    deviders = []
+    for i in range(1,n//2 + 1):
+        if n % i == 0:
+            deviders.append(i)
+    if n != 1 and n != 0:
+        deviders.append(n)
+    return deviders
+
+def nCr(n : int, r : int):
+    if n < 0 or r < 0 or r > n:
+        print(Fore.RED + "Errore: n e r devono essere non negativi e r deve essere minore o uguale a n.")
+        return None
+    return factorial(n) // (factorial(r) * factorial(n-r))
+
+def nPr(n : int, r : int):
+    if n < 0 or r < 0 or r > n:
+        print(Fore.RED + "Errore: n e r devono essere non negativi e r deve essere minore o uguale a n.")
+        return None
+    return factorial(n) // factorial(n-r)

@@ -1,7 +1,7 @@
 from colorama import Fore, Style, init
-from Headers import *
-from operatori import *
-from espressioni import *
+from src.Headers import *
+from src.operatori import *
+from src.espressioni import *
 
 init(autoreset=True)
  
@@ -22,6 +22,9 @@ def main():
                 Kramer3x3(None)
 
             case 3:
+                helpLoop()
+
+            case 4:
                 break
 
 
