@@ -3,7 +3,8 @@ from more_itertools import is_prime,factor
 from src.Headers import *
 from src.operatori import *
 from src.utilities import *
-from math import *
+from src.Funcs import *
+from math import * 
 import ast
 import operator
 import os
@@ -64,7 +65,7 @@ def safe_eval(expr_str: str) -> float | None:
         return None
 
 def gestisciOperatoreSpeciale(expr : list[str], variabili : dict) -> list[str] | None:
-    """Gestisce operatori speciali.
+    """Gestisce operatori speciali e funzioni.
     Args:
         expr: Lista di token dell'espressione
         variabili: Dizionario variabili disponibili
@@ -74,26 +75,29 @@ def gestisciOperatoreSpeciale(expr : list[str], variabili : dict) -> list[str] |
     """
     i = 0
     lunghezza = len(expr)
-    if lunghezza < 2:
-        return None
 
     while i < lunghezza:
         token = expr[i]
         ris = None
 
-        if token == Config.CustomOperators.FUNZIONE.value and i > 0 and expr[i-1] in NOMI_OPERATORI_SPECIALI:
+        if token == Config.CustomOperators.FUNZIONE.value and i > 0 and expr[i-1] in NOMI_OPERATORI_SPECIALI or expr[i-1] in FUNZIONI:
             if i+1 < len(expr):
                 valori = tokenizeVirgole(expr[i+1])
-                valori = [val for val in valori if val != ","]
                 if valori is None:
                     return None
                 
+                # gestione operatori
                 try:
                     if ciSonoVar(valori, variabili):
                         valori = convertiVariabili(valori, variabili)
 
                     if valori is None:
                         return None
+                    
+                     # gestione funzioni
+                    if expr[i-1] in FUNZIONI:
+                        logic, vars = FUNZIONI[expr[i-1]].processa(valori)
+                        return controlloExpr(logic,vars)
 
                     match expr[i-1]:
                         case Config.SpecialOperators.POWER.value:
@@ -311,6 +315,9 @@ def processaEspressione(expr : list[str], variabili : dict) -> float | None:
         return None
 
     # caso in cui c'è assegnamento (x = 5)
+    if isinstance(expr,float):
+        return expr
+        
     if len(expr) >= 3 and '=' in expr:
         nome_variabile = expr[0]
 
@@ -399,8 +406,35 @@ def evaluateWithParentheses(expr : list[str], variabili : dict) -> float | None:
 def controlloExpr(expr : str, variabili : dict):
     # controllo se espressione in formato giusto
     expr_debug = expr
+    # caso in cui sia un define funzione
+    if expr.startswith(Config.CustomFuncs.DEF.value):
+        expr = expr.split(Config.FUNC_DEVIDER)
+        if len(expr) != 4:
+            print(Fore.RED + f"Errore hai passato {len(expr)} argomenti alla definizione di una funzione invece di 4.")
+            return None
+        
+        nome = togliSpazi(expr[1])
+        if not validaNomeVariabile(nome) and nome not in variabili:
+            print(Fore.RED + f"ERRORE: {nome} nome non valido")
+            return None
+        
+        args = []
+        parametri = tokenizeVirgole(expr[2])
+        for a in parametri:
+            a = togliSpazi(a)
+            if a in args:
+                continue
+            if validaNomeVariabile(a) and a != nome:
+                args.append(a)
+            else:
+                print(Fore.RED + f"Errore: {a} non valido come nome parametro funzione")
+                return None
+        logica = togliSpazi(expr[3])
+        f = Function(nome,args,logica)
+        FUNZIONI[f.nome] = f 
+        return None
+
     try:
-        expr = togliSpazi(expr)
         expr = tokenize(expr)
         expr = formatta(expr)
         validaParentesi(expr)
@@ -413,6 +447,7 @@ def controlloExpr(expr : str, variabili : dict):
         if ris is not None:
             variabili[Config.RIS_PRECEDENTE] = ris
             print(Fore.GREEN + "Risultato: " + Fore.WHITE + str(ris))
+            return ris
         else:
             print(Fore.RED + f"ERRORE in espressione: {expr_debug}")
             print(Fore.RED + "Espressione non valida.")
@@ -446,11 +481,13 @@ def espressionLoop() -> None:
     variabili = dict()
     # costnati 
     variabili[Config.PI] = pi
+    FUNZIONI.clear()
 
     while True:
         clear()
         espressioniHeader()
         expr = input("espressione: ")
+        expr = togliSpazi(expr)
         if not expr:
             continue
         
@@ -494,6 +531,17 @@ def espressionLoop() -> None:
                 variabili['y'] = y
                 variabili['z'] = z
                 print(Fore.GREEN + f"Soluzioni salvate: x={x}, y={y}, z={z}")
+            continue
+
+        elif expr == Config.CustomFuncs.DEF.value:
+            f = newFunction(variabili)
+            if f is not None:
+                FUNZIONI[f.nome] = f
+            input("Premi per continuare...")
+            continue
+
+        elif expr == Config.CustomFuncs.SHOW_FUNCTIONS.value:
+            showFuncs(FUNZIONI)
             continue
 
         elif expr == Config.CustomFuncs.PULISCI.value:

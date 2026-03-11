@@ -3,6 +3,9 @@ from src.config import *
 from enum import Enum
 import ast
 import os
+from math import pi
+
+FUNZIONI = dict()
 
 # ===== CUSTOM EXCEPTIONS =====
 class InvalidExpressionError(Exception):
@@ -81,7 +84,6 @@ def tokenizeVirgole(espressione : str) -> list[str]:
             if current_token:
                 tokens.append(current_token)
                 current_token = ""
-            tokens.append(char)
         else:
             current_token += char
     if current_token:
@@ -91,10 +93,11 @@ def tokenizeVirgole(espressione : str) -> list[str]:
     return tokens
 
 def validaNomeVariabile(variabile : str) -> bool:
+
     if not variabile:
         return False
     
-    if variabile in NOMI_NON_VALIDI:
+    if variabile in NOMI_NON_VALIDI or variabile in FUNZIONI:
         return False
     
     if variabile[0].isdigit():
@@ -159,12 +162,12 @@ def formatta(tokens : list[str]) -> list[str]:
 
 def ciSonoVar(expr : list[str], variabili : dict) -> bool:
     for token in expr:
-        if token not in OPERATORI and not is_number(token) and token not in NOMI_OPERATORI_SPECIALI and ',' not in token:
+        if token not in OPERATORI and not is_number(token) and token not in NOMI_OPERATORI_SPECIALI and ',' not in token and token not in FUNZIONI:
             return True
     return False
 
 def ciSonoOperatoriSpeciali(expr : list[str]) -> bool:
-    return any(token in OPERATORI_SPECIALI for token in expr)
+    return any(token in OPERATORI_SPECIALI or token in FUNZIONI for token in expr)
 
 def KramerInput(variabili : dict) -> list[list[float]] | None:
     equazioni = [[0,0,0,0] for _ in range(3)]
@@ -209,6 +212,8 @@ def salvaSessione(variabili : dict):
                 if val > 999999999999 or val < -999999999999:
                     print(Fore.YELLOW + f"Attenzione: la variabile '{var}' ha un valore troppo grande per essere salvato correttamente.")
                 f.write(f"{var}={val}\n")
+            for func in FUNZIONI.values():
+                f.write(func.__str__() + '\n')
         print(Fore.GREEN + f"Sessione '{nomeSessione}' salvata con successo.")
     else:
         print(Fore.RED + "Nome sessione non valido")

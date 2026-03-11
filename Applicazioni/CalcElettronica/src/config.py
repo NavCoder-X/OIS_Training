@@ -54,6 +54,8 @@ class Config:
         PWD = "pwd"                    # Pint working directory
         SALVA = "save"                 # Comando per salvare variabili su file
         LIST = "list"                  # Fa vedere tutte le sessioni nella path disgnata
+        DEF = "DEF"                    # Definisce una funzione per l utente
+        SHOW_FUNCTIONS = "showf"       # mostra le funzioni
 
 
     NOMI_OPERATORI_SPECIALI = set([m.value for m in SpecialOperators])
@@ -66,7 +68,8 @@ class Config:
     MIN_RESISTANCES = 2                # Numero minimo resistenze necessario
     PI = "pi"                          # Pigreco
     RIS_PRECEDENTE = "ris"             # var dove salva risultato calcolato
-    ESTENSIONE_SESSIONE = "session"   # estensione file per salvataggio sessione
+    ESTENSIONE_SESSIONE = "session"    # estensione file per salvataggio sessione
+    FUNC_DEVIDER = "|"                 # escape charachter per riconoscere varie parti della def di funzione
 
 # Alias 
 OPERATORI = Config.OPERATORI

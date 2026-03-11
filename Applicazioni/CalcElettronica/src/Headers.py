@@ -47,8 +47,9 @@ def menu() -> None:
     titolo()
     print(Fore.GREEN + "1. Espressioni")
     print(Fore.GREEN + "2. Kramer 3x3")
-    print(Fore.GREEN + "3. Aiuto")
-    print(Fore.GREEN + "4. Esci")
+    print(Fore.GREEN + "3. Bolean Parser")
+    print(Fore.GREEN + "4. Aiuto")
+    print(Fore.GREEN + "5. Esci")
 
 def helpHeader():
     print(
@@ -95,6 +96,8 @@ permutazioni_cmd = Config.CustomFuncs.PERMUTAZIONI.value
 pwd_cmd = Config.CustomFuncs.PWD.value
 save_cmd = Config.CustomFuncs.SALVA.value
 list_cmd = Config.CustomFuncs.LIST.value
+def_cmd = Config.CustomFuncs.DEF.value
+showf_cmd = Config.CustomFuncs.SHOW_FUNCTIONS.value
 
 par_op = Config.CustomOperators.PARALLELO.value
 fun_op = Config.CustomOperators.FUNZIONE.value
@@ -138,13 +141,23 @@ FUNZIONI SPECIALI (sintassi: NOME{fun_op}parametri):
 COMANDI:
   • {exit_cmd}          → Torna al menu
   • {show_cmd}          → Mostra variabili definite
+  • {showf_cmd}         → Mostra funzioni utente definite
   • {clear_cmd}         → Cancella variabili
   • {read_cmd}          → Leggi da file
   • {kramer_cmd}        → Risolvi sistema 3x3
+  • {def_cmd}           → Crea una funzione utente (procedura guidata)
   • {factors_cmd} x     → Fattori primi di x (int)
   • {divisori_cmd} x    → Divisori di x (int)
   • {combinazioni_cmd} n,k → Combinazioni C(n,k)
   • {permutazioni_cmd} n,k → Permutazioni P(n,k)
+
+FUNZIONI UTENTE:
+  • Definizione guidata: {def_cmd}
+  • Definizione inline: {def_cmd} | nome | arg1,arg2,... | espressione
+  • Chiamata funzione: nome{fun_op}arg1,arg2,...
+  • Esempio:
+      {def_cmd} | somma2 | x,y | x+y
+      somma2{fun_op}3,4
 
 VARIABILI:
   • Puoi definire variabili: (x = 5)-(y = 10)
@@ -195,13 +208,19 @@ COMANDI DURANTE L'INSERIMENTO:
   • {exit_cmd}           → Ritorna al menu precedente
   • {help_cmd}           → Mostra questo aiuto
   • {show_cmd}           → Mostra variabili definite
+  • {showf_cmd}          → Mostra funzioni utente
+  • {def_cmd}            → Crea funzione utente guidata
   • {clear_cmd}          → Cancella tutte le variabili salvate
   • {kramer_cmd}         → Risolvi un sistema 3x3
 
 COMANDI DI SESSIONE:
   • {pwd_cmd}            → Mostra directory corrente
-  • {save_cmd}           → Salva la sessione su file
+  • {save_cmd}           → Salva la sessione su file (variabili + funzioni)
   • {list_cmd}           → Elenca tutte le sessioni salvate
+
+SINTASSI RAPIDA FUNZIONI:
+  • Definizione inline: {def_cmd} | nome | arg1,arg2,... | espressione
+  • Chiamata: nome{fun_op}{fun_op}arg1,arg2,...
   
 SUGGERIMENTI:
   • Puoi definire variabili in qualsiasi momento
@@ -227,14 +246,90 @@ ESEMPIO DI input.txt:
   2 + 3 * 4
   (10 + 5) / 3
   {p}{fun_op}(12,2)
+  {def_cmd} | func | x | x*(x+1)/2
+  y = func{fun_op}10
   
-  {sqrt}{fun_op}(16)
+  {sqrt}{fun_op}16
   x = 5
   x * 2
 
 NOTE:
   • Le variabili definite in un'espressione persistono alle seguenti
-  • Non puoi usare Comandi speciali (es: {help_cmd}, {show_cmd}) all'interno di input.txt
+  • Puoi definire funzioni anche da file con la sintassi inline di {def_cmd}
+  • Non puoi usare comandi interattivi (es: {help_cmd}, {show_cmd}, {showf_cmd}) all'interno di input.txt
+""")
+    print(Fore.YELLOW + "Premi ENTER per continuare...")
+    input()
+
+def helpPrecedenze():
+    print(Fore.CYAN + "\n=== PRECEDENZE OPERATORI ===")
+    print(Fore.WHITE + f"""
+Ordine di valutazione (dal PRIMO all'ULTIMO):
+
+  1.  ( )                → Parentesi  — risolte dall'interno verso l'esterno
+  2.  NOME{fun_op}(args) → Funzioni speciali e funzioni utente
+  3.  x{fat_op}          → Fattoriale
+  4.  x{par_op}y         → Parallelo resistenze
+  5.  ^                  → Potenza
+  6.  * /                → Moltiplicazione e divisione (sx → dx)
+  7.  + -                → Addizione e sottrazione (sx → dx)
+
+REGOLE GENERALI:
+  • Le parentesi ( ) hanno sempre la precedenza massima.
+  • Le funzioni speciali (es: {sqrt}{fun_op}x, {sin_op}{fun_op}x) vengono valutate
+    prima di qualsiasi operazione aritmetica.
+  • Il fattoriale (x{fat_op}) si applica solo al numero immediatamente prima.
+  • Il parallelo (x{par_op}y) ha precedenza su *, / e +, -.
+  • A parità di precedenza si valuta da sinistra a destra.
+
+ASSEGNAMENTO:
+  • In  nome = espressione  prima viene valutata tutta l'espressione a destra
+    dell'uguale, poi il risultato viene assegnato alla variabile.
+  • Esempio: x = 2 + 3 * 4  →  x = 14
+
+ESEMPI DI PRECEDENZA:
+  2 + 3 * 4       →  2 + 12     = 14
+  (2 + 3) * 4     →  5 * 4      = 20
+  2 ^ 3 * 4       →  8 * 4      = 32   (^ prima di *)
+  5{fat_op} + 1   →  120 + 1    = 121
+  4{par_op}4 * 2  →  2 * 2      = 4    (| prima di *)
+  {sqrt}{fun_op}(9) + 1  →  3 + 1  = 4
+""")
+    print(Fore.YELLOW + "Premi ENTER per continuare...")
+    input()
+
+def helpBitwise():
+    print(Fore.CYAN + "\n=== GUIDA CALCOLATORE BITWISE ===")
+    print(Fore.WHITE + """
+Il parser bitwise lavora su interi e supporta assegnamenti a variabili.
+
+OPERATORI SUPPORTATI:
+  • &   → AND bit a bit
+  • |   → OR bit a bit
+  • ^   → XOR bit a bit
+  • ~x  → NOT bit a bit (complemento)
+  • <   → Shift a sinistra (es: 5 < 1 = 10)
+  • >   → Shift a destra  (es: 8 > 1 = 4)
+  • ( ) → Parentesi per controllare l'ordine
+
+ASSEGNAMENTI E VARIABILI:
+  • a = 5
+  • b = a < 2
+  • ris contiene sempre l'ultimo risultato
+
+COMANDI DISPONIBILI NELLA SESSIONE BITWISE:
+  • show      → Mostra variabili salvate
+  • confronta → Mostra DEC/BIN/HEX di un valore (scrivi break per uscire)
+
+ESEMPI RAPIDI:
+  • 5 & 3
+  • (8 > 1) | 1
+  • mask = 15
+  • ~mask
+
+NOTE:
+  • Usa solo numeri interi
+  • Gli shift usano i simboli singoli: < e >
 """)
     print(Fore.YELLOW + "Premi ENTER per continuare...")
     input()
@@ -248,7 +343,9 @@ def helpLoop():
         print(Fore.GREEN + "2. Kramer 3x3")
         print(Fore.GREEN + "3. Comandi speciali")
         print(Fore.GREEN + "4. Lettura file")
-        print(Fore.GREEN + "5. Torna al menu principale")
+        print(Fore.GREEN + "5. Precedenze operatori")
+        print(Fore.GREEN + "6. Calcolatore bitwise")
+        print(Fore.GREEN + "7. Torna al menu principale")
         scelta = input(Fore.WHITE + "Quale sezione vuoi vedere: ")
         
         if scelta.isdigit():
@@ -270,9 +367,23 @@ def helpLoop():
                 clear()
                 helpFileLettura()
             case 5:
+                clear()
+                helpPrecedenze()
+            case 6:
+              clear()
+              helpBitwise()
+            case 7:
                 break
             case _:
                 print(Fore.RED + "Opzione non valida!")
                 input(Fore.YELLOW + "Premi ENTER per continuare...")
         
-    
+def bitwiseHeader():  
+    print(Fore.LIGHTBLUE_EX + Style.BRIGHT + r"""
+██████  ██ ████████ ██     ██ ██ ███████ ███████ 
+██   ██ ██    ██    ██     ██ ██ ██      ██      
+██████  ██    ██    ██  █  ██ ██ ███████ █████   
+██   ██ ██    ██    ██ ███ ██ ██      ██ ██      
+██████  ██    ██     ███ ███  ██ ███████ ███████ 
+                                                 
+                                                 """)

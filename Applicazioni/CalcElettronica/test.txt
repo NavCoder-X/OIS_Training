@@ -37,5 +37,10 @@ mcm = LCM>18,12
 ipotenusa = HYPOT>3,4
 
 
+# funzioni
+DEF | func |      x | x*(x+1)/2
+banan__ = func > 100
+
+
 
 
