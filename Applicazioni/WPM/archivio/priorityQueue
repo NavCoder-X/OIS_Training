@@ -1,0 +1,18 @@
+// Priority Queue STL
+// max-heap (default)
+priority_queue<int> pq;
+pq.push(x);
+int top = pq.top();
+pq.pop();
+
+// min-heap
+priority_queue<int, vector<int>, greater<int>> minPQ;
+
+// con coppie (priority, node) per Dijkstra
+priority_queue<pair<int,int>, vector<pair<int,int>>, greater<>> pqDijk;
+pqDijk.push({dist, node});
+auto [d, u] = pqDijk.top(); pqDijk.pop();
+
+// custom comparator
+auto cmp = [](pair<int,int>& a, pair<int,int>& b){ return a.first > b.first; };
+priority_queue<pair<int,int>, vector<pair<int,int>>, decltype(cmp)> pqCustom(cmp);

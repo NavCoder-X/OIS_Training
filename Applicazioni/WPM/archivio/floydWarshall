@@ -1,0 +1,10 @@
+// Floyd-Warshall - shortest path tra tutte le coppie
+// dist[i][j] = distanza i->j, INF se non raggiungibile
+const int INF = 1e9;
+void floydWarshall(vector<vector<int>>& dist, int n) {
+    for (int k = 0; k < n; k++)
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                if (dist[i][k]+dist[k][j] < dist[i][j])
+                    dist[i][j] = dist[i][k]+dist[k][j];
+}

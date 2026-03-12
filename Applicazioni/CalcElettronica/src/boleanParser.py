@@ -187,6 +187,9 @@ def boolLoop():
             if not expr:
                 continue
 
+            if expr == 'exit':
+                break
+
             if expr == "show":
                 show(VARIABILI)
                 input(Fore.YELLOW + "Premi ENTER per continuare...")

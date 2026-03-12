@@ -1,0 +1,15 @@
+// DSU - Disjoint Set Union con path compression + rank
+struct DSU {
+    vector<int> par, rnk;
+    DSU(int n) : par(n), rnk(n, 0) { iota(par.begin(), par.end(), 0); }
+    int find(int x) { return par[x]==x ? x : par[x]=find(par[x]); }
+    bool unite(int a, int b) {
+        a = find(a); b = find(b);
+        if (a == b) return false;
+        if (rnk[a] < rnk[b]) swap(a, b);
+        par[b] = a;
+        if (rnk[a] == rnk[b]) rnk[a]++;
+        return true;
+    }
+    bool same(int a, int b) { return find(a) == find(b); }
+};

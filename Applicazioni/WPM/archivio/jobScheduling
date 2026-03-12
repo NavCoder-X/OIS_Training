@@ -1,0 +1,11 @@
+// Job Scheduling con deadline - massimizza profitto
+struct Job { int id, deadline, profit; };
+int jobScheduling(vector<Job>& jobs, int n) {
+    sort(jobs.begin(), jobs.end(), [](auto& a, auto& b){ return a.profit > b.profit; });
+    vector<int> slot(n+1, -1);
+    int totalProfit = 0;
+    for (auto& j : jobs)
+        for (int d = min(n, j.deadline); d >= 1; d--)
+            if (slot[d] == -1) { slot[d] = j.id; totalProfit += j.profit; break; }
+    return totalProfit;
+}

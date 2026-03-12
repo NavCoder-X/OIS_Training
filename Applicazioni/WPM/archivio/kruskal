@@ -1,0 +1,21 @@
+// Kruskal MST con DSU
+struct Edge { int u, v, w; };
+vector<int> par, rnk;
+int find(int x) { return par[x]==x ? x : par[x]=find(par[x]); }
+bool unite(int a, int b) {
+    a = find(a); b = find(b);
+    if (a == b) return false;
+    if (rnk[a] < rnk[b]) swap(a, b);
+    par[b] = a;
+    if (rnk[a] == rnk[b]) rnk[a]++;
+    return true;
+}
+int kruskal(int n, vector<Edge>& edges) {
+    par.resize(n); iota(par.begin(), par.end(), 0);
+    rnk.assign(n, 0);
+    sort(edges.begin(), edges.end(), [](auto& a, auto& b){ return a.w < b.w; });
+    int cost = 0;
+    for (auto& e : edges)
+        if (unite(e.u, e.v)) cost += e.w;
+    return cost;
+}

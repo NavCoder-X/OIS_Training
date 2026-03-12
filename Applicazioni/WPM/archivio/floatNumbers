@@ -1,0 +1,26 @@
+// Numeri float - precisione e confronto
+#include <cmath>
+const double EPS = 1e-9;
+const double PI = acos(-1.0L);
+
+// confronto sicuro
+bool eq(double a, double b) { return fabs(a-b) < EPS; }
+bool lt(double a, double b) { return a < b-EPS; }
+bool gt(double a, double b) { return a > b+EPS; }
+
+// arrotondamento
+int toInt(double x) { return (int)(x+EPS); }
+
+// uso long double per maggiore precisione
+long double pi = acosl(-1.0L);
+
+// geometria base
+double dist(double x1, double y1, double x2, double y2) {
+    return sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
+}
+double cross(double ax, double ay, double bx, double by) {
+    return ax*by - ay*bx;
+}
+double dot(double ax, double ay, double bx, double by) {
+    return ax*bx + ay*by;
+}

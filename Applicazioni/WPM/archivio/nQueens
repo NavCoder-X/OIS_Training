@@ -1,0 +1,18 @@
+// N-Queens backtracking
+vector<vector<string>> solutions;
+void solve(int row, int n, vector<int>& col, vector<int>& diag1, vector<int>& diag2, vector<string>& board) {
+    if (row == n) { solutions.push_back(board); return; }
+    for (int c = 0; c < n; c++) {
+        if (col[c] || diag1[row-c+n] || diag2[row+c]) continue;
+        col[c] = diag1[row-c+n] = diag2[row+c] = 1;
+        board[row][c] = 'Q';
+        solve(row+1, n, col, diag1, diag2, board);
+        board[row][c] = '.';
+        col[c] = diag1[row-c+n] = diag2[row+c] = 0;
+    }
+}
+void nQueens(int n) {
+    vector<int> col(n,0), d1(2*n,0), d2(2*n,0);
+    vector<string> board(n, string(n,'.'));
+    solve(0, n, col, d1, d2, board);
+}

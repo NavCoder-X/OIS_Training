@@ -1,0 +1,31 @@
+// Trie - inserimento e ricerca stringhe
+struct Trie {
+    struct Node {
+        int ch[26];
+        bool end;
+        Node() : end(false) { fill(ch, ch+26, -1); }
+    };
+    vector<Node> nodes;
+    Trie() { nodes.push_back(Node()); }
+    void insert(const string& s) {
+        int cur = 0;
+        for (char c : s) {
+            int idx = c-'a';
+            if (nodes[cur].ch[idx] == -1) {
+                nodes[cur].ch[idx] = nodes.size();
+                nodes.push_back(Node());
+            }
+            cur = nodes[cur].ch[idx];
+        }
+        nodes[cur].end = true;
+    }
+    bool search(const string& s) {
+        int cur = 0;
+        for (char c : s) {
+            int idx = c-'a';
+            if (nodes[cur].ch[idx] == -1) return false;
+            cur = nodes[cur].ch[idx];
+        }
+        return nodes[cur].end;
+    }
+};

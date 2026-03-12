@@ -1,0 +1,14 @@
+// ternary search su funzione unimodale f(x)
+// massimo su interi [lo, hi]
+long long ternarySearch(long long lo, long long hi) {
+    while (hi - lo > 2) {
+        long long m1 = lo + (hi-lo)/3;
+        long long m2 = hi - (hi-lo)/3;
+        if (f(m1) < f(m2)) lo = m1;
+        else hi = m2;
+    }
+    long long best = lo;
+    for (long long x = lo; x <= hi; x++)
+        if (f(x) > f(best)) best = x;
+    return best;
+}

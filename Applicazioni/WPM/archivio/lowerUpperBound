@@ -1,0 +1,9 @@
+// primo >= target
+auto it = lower_bound(v.begin(), v.end(), target);
+// primo > target
+auto it2 = upper_bound(v.begin(), v.end(), target);
+// indice
+int idx = lower_bound(v.begin(), v.end(), target) - v.begin();
+// conta occorrenze di x
+int cnt = upper_bound(v.begin(), v.end(), x)
+        - lower_bound(v.begin(), v.end(), x);

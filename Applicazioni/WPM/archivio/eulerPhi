@@ -1,0 +1,22 @@
+// Funzione di Eulero phi(n) - count coprimi < n
+// phi di singolo n in O(sqrt(n))
+long long eulerPhi(long long n) {
+    long long result = n;
+    for (long long p = 2; p*p <= n; p++)
+        if (n%p == 0) {
+            while (n%p == 0) n /= p;
+            result -= result/p;
+        }
+    if (n > 1) result -= result/n;
+    return result;
+}
+// sieve di phi per tutti i valori fino a n
+vector<int> phiSieve(int n) {
+    vector<int> phi(n+1);
+    iota(phi.begin(), phi.end(), 0);
+    for (int i = 2; i <= n; i++)
+        if (phi[i] == i)
+            for (int j = i; j <= n; j += i)
+                phi[j] -= phi[j]/i;
+    return phi;
+}

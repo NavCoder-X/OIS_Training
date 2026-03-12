@@ -1,0 +1,17 @@
+// Digit DP - conta numeri in [0, N] con proprieta P
+// stato: (pos, tight, leading_zero, sum)
+string N;
+int memo[20][2][2][200];
+int solve(int pos, bool tight, bool leadZero, int sum) {
+    if (pos == N.size()) return !leadZero && sum == target;
+    int& ret = memo[pos][tight][leadZero][sum];
+    if (ret != -1) return ret;
+    int limit = tight ? (N[pos]-'0') : 9;
+    ret = 0;
+    for (int d = 0; d <= limit; d++) {
+        bool newTight = tight && (d == limit);
+        bool newLead = leadZero && (d == 0);
+        ret += solve(pos+1, newTight, newLead, newLead ? 0 : sum+d);
+    }
+    return ret;
+}

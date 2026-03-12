@@ -1,0 +1,12 @@
+// Merge intervalli sovrapposti
+vector<pair<int,int>> mergeIntervals(vector<pair<int,int>>& ivs) {
+    sort(ivs.begin(), ivs.end());
+    vector<pair<int,int>> res;
+    for (auto& [s, e] : ivs) {
+        if (res.empty() || res.back().second < s)
+            res.push_back({s, e});
+        else
+            res.back().second = max(res.back().second, e);
+    }
+    return res;
+}

@@ -1,0 +1,12 @@
+// DFS ricorsivo - segna visitati e ordine post
+vector<bool> vis;
+vector<int> order;
+void dfs(int u, vector<vector<int>>& adj) {
+    vis[u] = true;
+    for (int v : adj[u])
+        if (!vis[v]) dfs(v, adj);
+    order.push_back(u);
+}
+// chiamata per tutti i nodi
+for (int i = 0; i < n; i++)
+    if (!vis[i]) dfs(i, adj);

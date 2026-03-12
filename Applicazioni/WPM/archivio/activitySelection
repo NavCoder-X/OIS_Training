@@ -1,0 +1,8 @@
+// Activity Selection - massimo numero di attivita non sovrapposte
+int activitySelection(vector<pair<int,int>>& acts) {
+    sort(acts.begin(), acts.end(), [](auto& a, auto& b){ return a.second < b.second; });
+    int count = 0, lastEnd = INT_MIN;
+    for (auto& [s, e] : acts)
+        if (s >= lastEnd) { count++; lastEnd = e; }
+    return count;
+}

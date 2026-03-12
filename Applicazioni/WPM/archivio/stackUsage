@@ -1,0 +1,23 @@
+// Stack STL - LIFO
+stack<int> st;
+st.push(x);
+int top = st.top();
+st.pop();
+bool empty = st.empty();
+int size = st.size();
+
+// uso comune: valutazione parentesi
+bool validParens(const string& s) {
+    stack<char> st;
+    for (char c : s) {
+        if (c == '(' || c == '[' || c == '{') st.push(c);
+        else {
+            if (st.empty()) return false;
+            char t = st.top(); st.pop();
+            if (c==')' && t!='(') return false;
+            if (c==']' && t!='[') return false;
+            if (c=='}' && t!='{') return false;
+        }
+    }
+    return st.empty();
+}

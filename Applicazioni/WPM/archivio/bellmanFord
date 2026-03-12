@@ -1,0 +1,15 @@
+// Bellman-Ford - rileva cicli negativi
+struct Edge { int u, v, w; };
+vector<int> bellmanFord(int s, int n, vector<Edge>& edges) {
+    vector<int> dist(n, INT_MAX);
+    dist[s] = 0;
+    for (int i = 0; i < n-1; i++)
+        for (auto& e : edges)
+            if (dist[e.u] != INT_MAX && dist[e.u]+e.w < dist[e.v])
+                dist[e.v] = dist[e.u]+e.w;
+    // check ciclo negativo
+    for (auto& e : edges)
+        if (dist[e.u] != INT_MAX && dist[e.u]+e.w < dist[e.v])
+            return {}; // ciclo negativo!
+    return dist;
+}

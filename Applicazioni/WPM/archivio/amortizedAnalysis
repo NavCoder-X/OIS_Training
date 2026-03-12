@@ -1,0 +1,27 @@
+// Analisi ammortizzata - strutture con costo O(1) ammortizzato
+// Stack con getMin in O(1) - costo push/pop ammortizzato O(1)
+struct MinStack {
+    stack<int> st, minSt;
+    void push(int x) {
+        st.push(x);
+        if (minSt.empty() || x <= minSt.top()) minSt.push(x);
+    }
+    void pop() {
+        if (st.top() == minSt.top()) minSt.pop();
+        st.pop();
+    }
+    int top() { return st.top(); }
+    int getMin() { return minSt.top(); }
+};
+
+// Two-stack queue - enqueue/dequeue ammortizzato O(1)
+struct AmortQueue {
+    stack<int> in, out;
+    void enqueue(int x) { in.push(x); }
+    int dequeue() {
+        if (out.empty())
+            while (!in.empty()) { out.push(in.top()); in.pop(); }
+        int x = out.top(); out.pop();
+        return x;
+    }
+};

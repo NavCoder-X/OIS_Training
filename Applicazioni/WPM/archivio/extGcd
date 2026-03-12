@@ -1,0 +1,15 @@
+// GCD esteso: ax + by = gcd(a,b)
+long long extGcd(long long a, long long b, long long& x, long long& y) {
+    if (b == 0) { x = 1; y = 0; return a; }
+    long long x1, y1;
+    long long g = extGcd(b, a%b, x1, y1);
+    x = y1;
+    y = x1 - (a/b)*y1;
+    return g;
+}
+// inverso modulare di a mod m (gcd(a,m) deve essere 1)
+long long modInverse(long long a, long long m) {
+    long long x, y;
+    extGcd(a, m, x, y);
+    return (x%m+m)%m;
+}

@@ -1,0 +1,33 @@
+// Albero con radice - traversal BFS e DFS, LCA
+vector<vector<int>> children;
+vector<int> parent, depth;
+void buildTree(int root, int n) {
+    parent.assign(n, -1);
+    depth.assign(n, 0);
+    queue<int> q;
+    q.push(root);
+    while (!q.empty()) {
+        int u = q.front(); q.pop();
+        for (int v : children[u]) {
+            parent[v] = u;
+            depth[v] = depth[u]+1;
+            q.push(v);
+        }
+    }
+}
+// LCA naive - risale dai due nodi
+int lca(int u, int v) {
+    while (depth[u] > depth[v]) u = parent[u];
+    while (depth[v] > depth[u]) v = parent[v];
+    while (u != v) { u = parent[u]; v = parent[v]; }
+    return u;
+}
+// Euler tour (in/out time) per query su sottoalbero
+vector<int> tin, tout;
+int timer = 0;
+void dfsTimer(int u, int p, vector<vector<int>>& adj) {
+    tin[u] = timer++;
+    for (int v : adj[u])
+        if (v != p) dfsTimer(v, u, adj);
+    tout[u] = timer++;
+}

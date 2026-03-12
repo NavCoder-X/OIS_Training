@@ -1,0 +1,23 @@
+// Sliding Window - sottarray di lunghezza k con somma massima
+int slidingWindowMax(vector<int>& a, int k) {
+    int n = a.size(), sum = 0, best;
+    for (int i = 0; i < k; i++) sum += a[i];
+    best = sum;
+    for (int i = k; i < n; i++) {
+        sum += a[i]-a[i-k];
+        best = max(best, sum);
+    }
+    return best;
+}
+// Sliding Window variabile - sottoarray piu corto con sum >= target
+int minSubarrayLen(vector<int>& a, int target) {
+    int n = a.size(), lo = 0, sum = 0, res = INT_MAX;
+    for (int hi = 0; hi < n; hi++) {
+        sum += a[hi];
+        while (sum >= target) {
+            res = min(res, hi-lo+1);
+            sum -= a[lo++];
+        }
+    }
+    return res == INT_MAX ? 0 : res;
+}

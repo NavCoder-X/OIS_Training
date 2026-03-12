@@ -1,0 +1,12 @@
+// Fattorizzazione in O(sqrt(n))
+vector<pair<long long,int>> primeFactors(long long n) {
+    vector<pair<long long,int>> factors;
+    for (long long p = 2; p*p <= n; p++)
+        if (n%p == 0) {
+            int cnt = 0;
+            while (n%p == 0) { cnt++; n /= p; }
+            factors.push_back({p, cnt});
+        }
+    if (n > 1) factors.push_back({n, 1});
+    return factors;
+}

@@ -1,0 +1,10 @@
+// sort crescente
+sort(v.begin(), v.end());
+// sort decrescente
+sort(v.begin(), v.end(), greater<int>());
+// sort per secondo elemento coppia
+sort(v.begin(), v.end(), [](auto& a, auto& b){
+    return a.second < b.second;
+});
+// sort stabile
+stable_sort(v.begin(), v.end());

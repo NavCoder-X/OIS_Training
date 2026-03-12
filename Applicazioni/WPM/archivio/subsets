@@ -1,0 +1,12 @@
+// Generazione sottoinsiemi con backtracking
+vector<vector<int>> subsets;
+void genSubsets(vector<int>& a, int i, vector<int>& cur) {
+    if (i == a.size()) { subsets.push_back(cur); return; }
+    // non includo a[i]
+    genSubsets(a, i+1, cur);
+    // includo a[i]
+    cur.push_back(a[i]);
+    genSubsets(a, i+1, cur);
+    cur.pop_back();
+}
+// oppure bit mask: for(int mask=0;mask<(1<<n);mask++)

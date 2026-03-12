@@ -1,0 +1,17 @@
+// Fenwick Tree / BIT - prefix sum, point update O(log n)
+struct Fenwick {
+    int n;
+    vector<long long> bit;
+    Fenwick(int n) : n(n), bit(n+1, 0) {}
+    void update(int i, long long delta) {
+        for (i++; i <= n; i += i&(-i))
+            bit[i] += delta;
+    }
+    long long query(int i) {
+        long long s = 0;
+        for (i++; i > 0; i -= i&(-i))
+            s += bit[i];
+        return s;
+    }
+    long long query(int l, int r) { return query(r)-(l ? query(l-1) : 0); }
+};

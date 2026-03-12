@@ -1,0 +1,9 @@
+int n = 0;
+vector<int> v;
+
+long long n;
+int sum = 0;
+int i, j, k;
+
+cin >> n >> m,
+ll t;

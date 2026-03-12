@@ -1,0 +1,19 @@
+// Greedy - tecniche generali
+// 1. Problema dello zaino frazionario
+struct Item { double val, wt; };
+double fractionalKnapsack(vector<Item>& items, double W) {
+    sort(items.begin(), items.end(), [](auto& a, auto& b){
+        return a.val/a.wt > b.val/b.wt;
+    });
+    double profit = 0;
+    for (auto& item : items) {
+        if (W >= item.wt) { profit += item.val; W -= item.wt; }
+        else { profit += item.val*(W/item.wt); break; }
+    }
+    return profit;
+}
+// 2. Huffman coding (frequenze -> codici ottimali)
+// usa priority_queue min-heap di (frequenza, nodo)
+// 3. Scheduling minimize lateness
+// ordina per deadline crescente
+// 4. Greedy su grafi: scegli sempre lato minimo (Kruskal/Prim)

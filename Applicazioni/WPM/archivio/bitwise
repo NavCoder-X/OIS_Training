@@ -1,0 +1,29 @@
+// Bitwise operations - trucchi olimpiadi
+int x = 42;
+// test bit i
+bool hasBit = (x >> i) & 1;
+// set bit i
+x |= (1 << i);
+// clear bit i
+x &= ~(1 << i);
+// toggle bit i
+x ^= (1 << i);
+// lowest set bit
+int lsb = x & (-x);
+// rimuovi lowest set bit
+x &= x-1;
+// conta bit settati
+int cnt = __builtin_popcount(x);   // int
+int cnt64 = __builtin_popcountll(x); // long long
+// leading zeros / trailing zeros
+int clz = __builtin_clz(x);
+int ctz = __builtin_ctz(x);
+// floor log2
+int log2x = 31 - __builtin_clz(x);
+// prossima potenza di 2 >= n
+int nextPow2 = 1;
+while (nextPow2 < n) nextPow2 <<= 1;
+// bitmask DP - itera tutti i sottoinsiemi di mask
+for (int sub = mask; sub > 0; sub = (sub-1) & mask) {
+    // usa sub
+}

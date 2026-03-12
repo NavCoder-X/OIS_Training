@@ -1,0 +1,13 @@
+// Generazione permutazioni con backtracking
+vector<vector<int>> permutations;
+void genPerms(vector<int>& a, int start) {
+    if (start == a.size()) { permutations.push_back(a); return; }
+    for (int i = start; i < a.size(); i++) {
+        swap(a[start], a[i]);
+        genPerms(a, start+1);
+        swap(a[start], a[i]);
+    }
+}
+// oppure con STL
+// sort(v.begin(), v.end());
+// do { ... } while (next_permutation(v.begin(), v.end()));

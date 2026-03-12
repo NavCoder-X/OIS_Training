@@ -1,0 +1,25 @@
+// Hashing con unordered_map e map
+// map - O(log n) per operazione, ordinato
+map<string, int> freq;
+freq["hello"]++;
+for (auto& [key, val] : freq) cout << key << " " << val << "\n";
+
+// unordered_map - O(1) ammortizzato, non ordinato
+unordered_map<int, int> cnt;
+cnt[x]++;
+if (cnt.count(x)) cout << cnt[x] << "\n";
+cnt.erase(x);
+
+// unordered_map con hash custom per pair<int,int>
+struct PairHash {
+    size_t operator()(const pair<int,int>& p) const {
+        return hash<long long>()(((long long)p.first << 32) | (unsigned)p.second);
+    }
+};
+unordered_map<pair<int,int>, int, PairHash> pairMap;
+
+// set e unordered_set
+set<int> s;
+s.insert(x); s.erase(x); s.count(x);
+unordered_set<int> us;
+us.insert(x); us.count(x);

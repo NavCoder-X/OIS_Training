@@ -1,0 +1,29 @@
+// Binary Search Tree - insert, search, inorder
+struct BST {
+    struct Node {
+        int val;
+        Node *left, *right;
+        Node(int v) : val(v), left(nullptr), right(nullptr) {}
+    };
+    Node* root = nullptr;
+    Node* insert(Node* node, int val) {
+        if (!node) return new Node(val);
+        if (val < node->val) node->left = insert(node->left, val);
+        else if (val > node->val) node->right = insert(node->right, val);
+        return node;
+    }
+    bool search(Node* node, int val) {
+        if (!node) return false;
+        if (val == node->val) return true;
+        return val < node->val ? search(node->left, val) : search(node->right, val);
+    }
+    void inorder(Node* node) {
+        if (!node) return;
+        inorder(node->left);
+        cout << node->val << " ";
+        inorder(node->right);
+    }
+    void insert(int v) { root = insert(root, v); }
+    bool search(int v) { return search(root, v); }
+    void inorder() { inorder(root); cout << "\n"; }
+};

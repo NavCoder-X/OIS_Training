@@ -1,0 +1,21 @@
+// Prim MST - O((V+E) log V)
+int prim(int n, vector<vector<pair<int,int>>>& adj) {
+    vector<int> dist(n, INT_MAX);
+    vector<bool> inMST(n, false);
+    priority_queue<pair<int,int>, vector<pair<int,int>>, greater<>> pq;
+    dist[0] = 0;
+    pq.push({0, 0});
+    int totalCost = 0;
+    while (!pq.empty()) {
+        auto [d, u] = pq.top(); pq.pop();
+        if (inMST[u]) continue;
+        inMST[u] = true;
+        totalCost += d;
+        for (auto [w, v] : adj[u])
+            if (!inMST[v] && w < dist[v]) {
+                dist[v] = w;
+                pq.push({w, v});
+            }
+    }
+    return totalCost;
+}
