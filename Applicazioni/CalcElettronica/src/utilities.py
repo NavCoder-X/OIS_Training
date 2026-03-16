@@ -1,11 +1,42 @@
-from colorama import Fore, Style, init
 from src.config import *
-from enum import Enum
-import ast
 import os
 from math import pi
 
 FUNZIONI = dict()
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def _resolve_path(file_name: str) -> str:
+    return os.path.join(PROJECT_ROOT, file_name)
+
+
+def write_output(message: str, append: bool = True) -> None:
+    mode = "a" if append else "w"
+    with open(_resolve_path(OUTPUT_FILE), mode, encoding="utf-8") as f:
+        f.write(str(message) + "\n")
+
+
+def write_error(message: str, append: bool = True) -> None:
+    mode = "a" if append else "w"
+    with open(_resolve_path(ERROR_FILE), mode, encoding="utf-8") as f:
+        f.write(str(message) + "\n")
+
+
+def write_variabili(variabili: dict) -> None:
+    with open(_resolve_path(VARIABILI_FILE), "w", encoding="utf-8") as f:
+        for key, value in variabili.items():
+            f.write(f"{key}={value}\n")
+
+
+def clear_io_files() -> None:
+    for file_name in (OUTPUT_FILE, ERROR_FILE, VARIABILI_FILE):
+        with open(_resolve_path(file_name), "w", encoding="utf-8") as f:
+            f.write("")
+
+
+def wait_user_input(*_args, **_kwargs) -> str:
+    # Non blocca in modalità TUI
+    return ""
 
 # ===== CUSTOM EXCEPTIONS =====
 class InvalidExpressionError(Exception):
@@ -170,14 +201,19 @@ def ciSonoOperatoriSpeciali(expr : list[str]) -> bool:
     return any(token in OPERATORI_SPECIALI or token in FUNZIONI for token in expr)
 
 def KramerInput(variabili : dict) -> list[list[float]] | None:
+    write_error("KramerInput richiede input interattivo: passare i coefficienti dalla TUI.")
+    return None
+
+
+def KramerInputLegacy(variabili : dict) -> list[list[float]] | None:
     equazioni = [[0,0,0,0] for _ in range(3)]
     
     for i in range(3):
         try:
-            riga = input(Fore.LIGHTBLUE_EX + f"equazione {i+1} (formato: x y z d): ").split()
+            riga = wait_user_input(f"equazione {i+1} (formato: x y z d): ").split()
             
             if len(riga) != 4:
-                print(Fore.RED + f"Errore: inserire esattamente 4 valori (hai inserito {len(riga)})")
+                write_error(f"Errore: inserire esattamente 4 valori (hai inserito {len(riga)})")
                 return None
             
             # Parser personalizzato per variabili
@@ -193,10 +229,10 @@ def KramerInput(variabili : dict) -> list[list[float]] | None:
                     raise InvalidVariableError(f"Variabile non definita: '{addendo}'")
         
         except InvalidVariableError as e:
-            print(Fore.RED + f"Errore nel parsing di variabili: {str(e)}")
+            write_error(f"Errore nel parsing di variabili: {str(e)}")
             return None
         except (ValueError, IndexError) as e:
-            print(Fore.RED + "Errore nel parsing dei coefficienti")
+            write_error("Errore nel parsing dei coefficienti")
             return None
     
     return equazioni
@@ -205,18 +241,22 @@ def togliCommenti(s : str):
     return s.split(Config.CustomOperators.COMMENTO.value)[0].strip()
 
 def salvaSessione(variabili : dict):
-    nomeSessione = input(Fore.CYAN + "nome Sessione: ")
+    write_error("salvaSessione richiede input interattivo: usare salvaSessioneConNome dalla TUI.")
+    return
+
+
+def salvaSessioneConNome(variabili: dict, nomeSessione: str):
     if nomeSessione and validaNomeVariabile(nomeSessione):
-        with open(f"{nomeSessione}.{Config.ESTENSIONE_SESSIONE}", "w") as f:
+        with open(_resolve_path(f"{nomeSessione}.{Config.ESTENSIONE_SESSIONE}"), "w", encoding="utf-8") as f:
             for var, val in variabili.items():
                 if val > 999999999999 or val < -999999999999:
-                    print(Fore.YELLOW + f"Attenzione: la variabile '{var}' ha un valore troppo grande per essere salvato correttamente.")
+                    write_output(f"Attenzione: la variabile '{var}' ha un valore troppo grande per essere salvato correttamente.")
                 f.write(f"{var}={val}\n")
             for func in FUNZIONI.values():
                 f.write(func.__str__() + '\n')
-        print(Fore.GREEN + f"Sessione '{nomeSessione}' salvata con successo.")
+        write_output(f"Sessione '{nomeSessione}' salvata con successo.")
     else:
-        print(Fore.RED + "Nome sessione non valido")
+        write_error("Nome sessione non valido")
 
 def listSessioni(path = None):
     if path is None:
@@ -224,7 +264,10 @@ def listSessioni(path = None):
     if os.path.exists(path):
         for file in os.listdir(path):
             if file.endswith(f".{Config.ESTENSIONE_SESSIONE}"):
-                print(Fore.GREEN + file)
+                write_output(file)
 
     else:
-        print(Fore.RED + "Path non valido")
+        write_error("Path non valido")
+
+def pulisciFiles():
+    clear_io_files()

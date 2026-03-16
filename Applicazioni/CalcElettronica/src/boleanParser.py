@@ -1,7 +1,4 @@
-from src.utilities import validaParentesi, is_number
-from colorama import Fore
-from src.Headers import bitwiseHeader, clear
-from src.espressioni import show
+﻿from src.utilities import validaParentesi, is_number, write_error, write_output, wait_user_input
 
 VARIABILI = dict()
 
@@ -37,10 +34,14 @@ class BitwiseParser:
         return tokens
     
     def evalWithParentesis(self, expr : list[str]):
-        if validaParentesi(expr):
-            expr.append(')')
-            expr.insert(0,'(')
-        else:
+        try:
+            if validaParentesi(expr):
+                expr.append(')')
+                expr.insert(0,'(')
+            else:
+                return None
+        except Exception as e:
+            write_error(f"Espressione non valida: {e}")
             return None
 
         ris = None
@@ -53,13 +54,21 @@ class BitwiseParser:
                 while stack and stack[-1] != '(':
                     sub_expr.insert(0, stack[-1])
                     stack.pop()
+
+                if not stack:
+                    write_error("Espressione non valida: parentesi non bilanciate.")
+                    return None
+
+                if not sub_expr:
+                    write_error("Espressione non valida: parentesi vuote.")
+                    return None
                 
                 # Valuto la sottospressione
                 ris = self.processa(sub_expr)
                 if ris is not None:
                     stack[-1] = str(ris)  # Sostituisco '(' con il risultato
                 else:
-                    print(Fore.RED + "Errore nella valutazione della sottospressione.")
+                    write_error("Errore nella valutazione della sottospressione.")
                     return None
             else:
                 stack.append(token)
@@ -67,6 +76,10 @@ class BitwiseParser:
         return ris
     
     def processa(self, expr : list[str]):
+        if not expr:
+            write_error("Espressione non valida: nessun contenuto da valutare.")
+            return None
+
         if '=' in expr and len(expr) >= 3:
             if expr[1] == '=' and self.validaNomeVariabile(expr[0]):
                 variabile = expr[0]
@@ -76,7 +89,7 @@ class BitwiseParser:
                     VARIABILI[variabile] = valore
                     return valore
                 else:
-                    print(Fore.RED + "Errore nella valutazione dell'espressione di assegnazione.")
+                    write_error("Errore nella valutazione dell'espressione di assegnazione.")
                     return None
                 
         i = 0
@@ -120,13 +133,14 @@ class BitwiseParser:
                     i-=1
                     
                 except Exception as e:
-                    print(Fore.RED + f"ERRORE: {e}")
+                    write_error(f"ERRORE: {e}")
                     return None
                 
             elif token == "~" and i+1 < lunghezza:
                 if is_number(expr[i+1]):
                     a = int(expr[i+1])
                 else:
+                    write_error("Espressione non valida: NOT richiede un numero dopo '~'.")
                     return None
                 
                 expr[i] = ~a
@@ -134,26 +148,61 @@ class BitwiseParser:
                 lunghezza -= 1
             
             i+=1
+
+        if len(expr) != 1:
+            write_error("Espressione non valida: operatori o operandi mancanti.")
+            return None
+
         return expr[0]
     
-    def stampaInQuadrato(self, s : list[str], l):
-        print(Fore.WHITE + "┌" + "─"*l +"┐" + Fore.CYAN + "┌" + "─"*l +"┐" + Fore.GREEN + "┌" + "─"*l +"┐")
-        print(Fore.WHITE + "│" + s[0].center(l) + "│" + Fore.CYAN + "│" + s[1].center(l) + "│" + Fore.GREEN + "│" + s[2].center(l) + "│")
-        print(Fore.WHITE + "└" + "─"*l + "┘" + Fore.CYAN + "└" + "─"*l + "┘" + Fore.GREEN + "└" + "─"*l + "┘")
+    def _to_base_without_prefix(self, value: int, base: int) -> str:
+        if base not in (2, 16):
+            raise ValueError("Base non supportata")
+
+        sign = "-" if value < 0 else ""
+        raw = format(abs(value), "b" if base == 2 else "x")
+        return f"{sign}{raw}"
+
+    def _render_clean_table(self, headers: tuple[str, ...], rows: list[tuple[str, ...]]) -> list[str]:
+        widths = [len(header) for header in headers]
+        for row in rows:
+            for i, cell in enumerate(row):
+                widths[i] = max(widths[i], len(cell))
+
+        header_line = " | ".join(header.ljust(widths[i]) for i, header in enumerate(headers))
+        separator = "-+-".join("-" * width for width in widths)
+        body = [" | ".join(cell.ljust(widths[i]) for i, cell in enumerate(row)) for row in rows]
+        return [header_line, separator, *body]
 
     
     def stampaConfigurazione(self,n : int):
-        b = str(bin(n))[2:]
-        h = str(hex(n))[2:]
-        n = str(n)
-        l = max(len(b),len(h),len(n))+10
-        self.stampaInQuadrato([n,b,h],l)
+        rows = [(
+            str(n),
+            self._to_base_without_prefix(n, 2),
+            self._to_base_without_prefix(n, 16),
+        )]
+        for line in self._render_clean_table(("DEC", "BIN", "HEX"), rows):
+            write_output(line)
         
     def validate(self, expr : list[str]):
-        for token in expr:
-            if token not in self.operators and not is_number(token) and not self.validaNomeVariabile(token):
-                print(Fore.RED + f"Token non valido: '{token}'")
+        assignment_index = expr.index('=') if '=' in expr else -1
+
+        for i, token in enumerate(expr):
+            if token in self.operators or is_number(token):
+                continue
+
+            if not self.validaNomeVariabile(token):
+                write_error(f"Token non valido: '{token}'")
                 return False
+
+            # LHS di assegnamento: permetti variabile nuova, es: x = 5
+            if assignment_index == 1 and i == 0:
+                continue
+
+            if token not in VARIABILI:
+                write_error(f"Variabile non definita: '{token}'")
+                return False
+
         return True
     
     def validaNomeVariabile(self, nome : str):
@@ -177,62 +226,3 @@ class BitwiseParser:
         return any(token in VARIABILI for token in expr)
     
     
-def boolLoop():
-    parser = BitwiseParser()
-    while True:
-        try:
-            clear()
-            bitwiseHeader()
-            expr = input("Espressione: ").strip()
-            if not expr:
-                continue
-
-            if expr == 'exit':
-                break
-
-            if expr == "show":
-                show(VARIABILI)
-                input(Fore.YELLOW + "Premi ENTER per continuare...")
-                continue
-
-            if expr == "confronta":
-                a = input("Valore: ").strip()
-                if a in VARIABILI:
-                    a = VARIABILI[a]
-                if not is_number(a):
-                    print(Fore.RED + f"Valore non valido: '{a}'")
-                    input(Fore.YELLOW + "Premi ENTER per continuare...")
-                    continue
-                
-                while a != 'break':
-                    parser.stampaConfigurazione(int(a))
-                    a = input("Valore: ").strip()
-                    if a in VARIABILI:
-                        a = VARIABILI[a]
-                    if not is_number(a):
-                        print(Fore.RED + f"Valore non valido: '{a}'")
-                        input(Fore.YELLOW + "Premi ENTER per continuare...")
-                        continue
-
-                input(Fore.YELLOW + "Premi ENTER per continuare...")
-                continue
-
-            tokens = parser.tokenize(expr)
-            if not parser.validate(tokens):
-                print(Fore.RED + "Espressione non valida. Assicurati di usare solo numeri e operatori bitwise (&, |, ^, ~, <, >).")
-                input()
-                continue
-
-            result = parser.evalWithParentesis(tokens)
-            if result is not None:
-                result = int(result)
-                VARIABILI['ris'] = str(result)
-                print(Fore.GREEN + f"Risultato: {result}")
-                parser.stampaConfigurazione(result)
-            else:
-                print(Fore.RED + "Errore nella valutazione dell'espressione.")
-            
-        except Exception as e:
-            print(Fore.RED + f"Errore: {e}")
-
-        input(Fore.YELLOW + "Premi ENTER per continuare...")

@@ -1,0 +1,161 @@
+.LayoutScreen {
+    layout: grid;
+    grid-size: 5 3;
+    height: 1fr;
+    background: $background;
+    color: $foreground;
+}
+
+.Variabili {
+    border: solid $primary;
+    column-span: 2;
+    row-span: 3;
+    scrollbar-size-vertical: 0;
+}
+
+.Funzioni {
+    border: solid $primary;
+    column-span: 3;
+    row-span: 1;
+    scrollbar-size-vertical: 0;
+}
+
+.Espressioni {
+    border: solid $primary;
+    column-span: 3;
+    row-span: 2;
+    scrollbar-size-vertical: 0;
+    padding: 1;
+}
+
+.BoleanParser {
+    border: solid $primary;
+    column-span: 4;
+    row-span: 3;
+    scrollbar-size-vertical: 0;
+    padding: 1;
+}
+
+.result-area {
+    height: 1fr;
+    border: round $primary;
+    padding: 1;
+    margin-bottom: 1;
+}
+
+.input {
+    width: 1fr;
+}
+
+.prompt-modal {
+    width: 74;
+    height: auto;
+    max-height: 90%;
+    padding: 1 2 2 2;
+    border: heavy $accent;
+    background: $panel;
+    color: $foreground;
+    align: center middle;
+}
+
+.prompt-title {
+    text-style: bold;
+    color: $accent;
+    content-align: center middle;
+    margin-bottom: 0;
+}
+
+.prompt-subtitle {
+    color: $foreground;
+    text-style: dim;
+    content-align: center middle;
+    margin-bottom: 1;
+}
+
+.prompt-label {
+    margin-top: 1;
+    color: $secondary;
+}
+
+.prompt-input {
+    border: round $primary;
+    background: $surface;
+    margin-top: 0;
+}
+
+.prompt-input:focus {
+    border: heavy $accent;
+    background: $surface;
+}
+
+.prompt-actions {
+    align: right middle;
+    margin-top: 2;
+    height: auto;
+}
+
+.HelpMenu {
+    border: solid $primary;
+    column-span: 1;
+    row-span: 3;
+    scrollbar-size-vertical: 0;
+    background: $background;
+    padding: 0 0;
+}
+
+.help-topic {
+    padding: 0 2;
+    height: 3;
+    content-align: left middle;
+    color: white;
+    border-left: tall transparent;
+}
+
+.help-topic.selected {
+    background: $background;
+    color: cyan;
+    border-left: tall cyan;
+    text-style: bold;
+}
+
+.Help {
+    border: solid $primary;
+    column-span: 4;
+    row-span: 3;
+    scrollbar-size-vertical: 1;
+    background: $background;
+    padding: 1 2;
+}
+
+.focus {
+    border: heavy $secondary;
+}
+
+.selector-screen {
+    align: center middle;
+}
+
+.selector-body {
+    width: 1fr;
+    height: 1fr;
+    align: center middle;
+}
+
+.selector {
+    border: heavy $primary;
+    color: $primary;
+    width: 30;
+    height: 3;
+    content-align: center middle;
+    margin: 1;
+}
+
+.selector.focus {
+    border: heavy $secondary;
+}
+
+.start {
+    width: auto;
+    text-align: center;
+    content-align: center middle;
+}

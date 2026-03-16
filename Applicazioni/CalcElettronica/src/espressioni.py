@@ -1,5 +1,4 @@
-from colorama import Fore, Style, init
-from more_itertools import is_prime,factor
+﻿from more_itertools import is_prime,factor
 from src.Headers import *
 from src.operatori import *
 from src.utilities import *
@@ -8,6 +7,11 @@ from math import *
 import ast
 import operator
 import os
+
+variabili = dict()
+# costnati 
+variabili[Config.PI] = pi
+FUNZIONI.clear()
 
 # Operatori sicuri per valutazione
 SAFE_OPERATORS = {
@@ -102,7 +106,7 @@ def gestisciOperatoreSpeciale(expr : list[str], variabili : dict) -> list[str] |
                     match expr[i-1]:
                         case Config.SpecialOperators.POWER.value:
                                 if len(valori) != 2:
-                                    print(Fore.RED + f"Errore: P> richiede 2 parametri (V, I), ricevuti {len(valori)}")
+                                    write_error(f"Errore: P> richiede 2 parametri (V, I), ricevuti {len(valori)}")
                                     return None
                                 V = float(valori[0])
                                 I = float(valori[1])
@@ -110,7 +114,7 @@ def gestisciOperatoreSpeciale(expr : list[str], variabili : dict) -> list[str] |
                         
                         case Config.SpecialOperators.CURRENT_DIVIDER.value:
                                 if len(valori) != 3:
-                                    print(Fore.RED + f"Errore: PC> richiede 3 parametri (R1, R2, Itot), ricevuti {len(valori)}")
+                                    write_error(f"Errore: PC> richiede 3 parametri (R1, R2, Itot), ricevuti {len(valori)}")
                                     return None
                                 R1 = float(valori[0])
                                 R2 = float(valori[1])
@@ -119,7 +123,7 @@ def gestisciOperatoreSpeciale(expr : list[str], variabili : dict) -> list[str] |
 
                         case Config.SpecialOperators.VOLTAGE_DIVIDER.value:
                                 if len(valori) != 3:
-                                    print(Fore.RED + f"Errore: PT> richiede 3 parametri (R1, R2, Vin), ricevuti {len(valori)}")
+                                    write_error(f"Errore: PT> richiede 3 parametri (R1, R2, Vin), ricevuti {len(valori)}")
                                     return None
                                 R1 = float(valori[0])
                                 R2 = float(valori[1])
@@ -128,19 +132,19 @@ def gestisciOperatoreSpeciale(expr : list[str], variabili : dict) -> list[str] |
 
                         case Config.SpecialOperators.PARALLELO.value:
                             if len(valori) < 1:
-                                print(Fore.RED + f"Errore: PLL> richiede almeno 1 parametro, ricevuti {len(valori)}")
+                                write_error(f"Errore: PLL> richiede almeno 1 parametro, ricevuti {len(valori)}")
                                 return None
                             ris = parallelo(list(map(float, valori)))
 
                         case Config.SpecialOperators.ABS.value:
                             if len(valori) != 1:
-                                print(Fore.RED + f"Errore: ABS> richiede 1 parametro, ricevuti {len(valori)}")
+                                write_error(f"Errore: ABS> richiede 1 parametro, ricevuti {len(valori)}")
                                 return None
                             ris = abs(float(valori[0]))
 
                         case Config.SpecialOperators.SQRT.value:
                             if len(valori) != 1 and len(valori) != 2:
-                                print(Fore.RED + f"Errore: SQRT> richiede 1 o 2 parametri, ricevuti {len(valori)}")
+                                write_error(f"Errore: SQRT> richiede 1 o 2 parametri, ricevuti {len(valori)}")
                                 return None
                             if len(valori) == 1:
                                 ris = sqrt(float(valori[0]))
@@ -149,7 +153,7 @@ def gestisciOperatoreSpeciale(expr : list[str], variabili : dict) -> list[str] |
                         
                         case Config.SpecialOperators.LOG.value:
                             if len(valori) != 1 and len(valori) != 2:
-                                print(Fore.RED + f"Errore: LOG> richiede 1 o 2 parametri, ricevuti {len(valori)}")
+                                write_error(f"Errore: LOG> richiede 1 o 2 parametri, ricevuti {len(valori)}")
                                 return None
                             if len(valori) == 1:
                                 ris = log10(float(valori[0]))
@@ -158,79 +162,79 @@ def gestisciOperatoreSpeciale(expr : list[str], variabili : dict) -> list[str] |
 
                         case Config.SpecialOperators.LOG2.value:
                             if len(valori) != 1:
-                                print(Fore.RED + f"Errore: LOG2> richiede 1 parametro, ricevuti {len(valori)}")
+                                write_error(f"Errore: LOG2> richiede 1 parametro, ricevuti {len(valori)}")
                                 return None
                             ris = log2(float(valori[0]))
 
                         case Config.SpecialOperators.SIN.value:
                             if len(valori) != 1:
-                                print(Fore.RED + f"Errore: SIN> richiede 1 parametro, ricevuti {len(valori)}")
+                                write_error(f"Errore: SIN> richiede 1 parametro, ricevuti {len(valori)}")
                                 return None
                             ris = sin(float(valori[0]))
 
                         case Config.SpecialOperators.COS.value:
                             if len(valori) != 1:
-                                print(Fore.RED + f"Errore: COS> richiede 1 parametro, ricevuti {len(valori)}")
+                                write_error(f"Errore: COS> richiede 1 parametro, ricevuti {len(valori)}")
                                 return None
                             ris = cos(float(valori[0]))
 
                         case Config.SpecialOperators.TAN.value:
                             if len(valori) != 1:
-                                print(Fore.RED + f"Errore: TAN> richiede 1 parametro, ricevuti {len(valori)}")
+                                write_error(f"Errore: TAN> richiede 1 parametro, ricevuti {len(valori)}")
                                 return None
                             ris = tan(float(valori[0]))
 
                         case Config.SpecialOperators.ASIN.value:
                             if len(valori) != 1:
-                                print(Fore.RED + f"Errore: ASIN> richiede 1 parametro, ricevuti {len(valori)}")
+                                write_error(f"Errore: ASIN> richiede 1 parametro, ricevuti {len(valori)}")
                                 return None
                             ris = asin(float(valori[0]))
 
                         case Config.SpecialOperators.ACOS.value:
                             if len(valori) != 1:
-                                print(Fore.RED + f"Errore: ACOS> richiede 1 parametro, ricevuti {len(valori)}")
+                                write_error(f"Errore: ACOS> richiede 1 parametro, ricevuti {len(valori)}")
                                 return None
                             ris = acos(float(valori[0]))
 
                         case Config.SpecialOperators.ATAN.value:
                             if len(valori) != 1:
-                                print(Fore.RED + f"Errore: ATAN> richiede 1 parametro, ricevuti {len(valori)}")
+                                write_error(f"Errore: ATAN> richiede 1 parametro, ricevuti {len(valori)}")
                                 return None
                             ris = atan(float(valori[0]))
 
                         case Config.SpecialOperators.DEG.value:
                             if len(valori) != 1:
-                                print(Fore.RED + f"Errore: DEG> richiede 1 parametro, ricevuti {len(valori)}")
+                                write_error(f"Errore: DEG> richiede 1 parametro, ricevuti {len(valori)}")
                                 return None
                             ris = degrees(float(valori[0]))
 
                         case Config.SpecialOperators.RAD.value:
                             if len(valori) != 1:
-                                print(Fore.RED + f"Errore: RAD> richiede 1 parametro, ricevuti {len(valori)}")
+                                write_error(f"Errore: RAD> richiede 1 parametro, ricevuti {len(valori)}")
                                 return None
                             ris = radians(float(valori[0]))
 
                         case Config.SpecialOperators.GCD.value:
                             if len(valori) != 2:
-                                print(Fore.RED + f"Errore: GCD> richiede 2 parametro, ricevuti {len(valori)}")
+                                write_error(f"Errore: GCD> richiede 2 parametro, ricevuti {len(valori)}")
                                 return None
                             ris = gcd(floor(float(valori[0])),floor(float(valori[1])))
 
                         case Config.SpecialOperators.LCM.value:
                             if len(valori) != 2:
-                                print(Fore.RED + f"Errore: LCM> richiede 2 parametro, ricevuti {len(valori)}")
+                                write_error(f"Errore: LCM> richiede 2 parametro, ricevuti {len(valori)}")
                                 return None
                             ris = lcm(floor(float(valori[0])),floor(float(valori[1])))
 
                         case Config.SpecialOperators.HYPOT.value:
                             if len(valori) != 2:
-                                print(Fore.RED + f"Errore: HYPOT> richiede 2 parametro, ricevuti {len(valori)}")
+                                write_error(f"Errore: HYPOT> richiede 2 parametro, ricevuti {len(valori)}")
                                 return None
                             ris = hypot(float(valori[0]),float(valori[1]))
 
                         case Config.SpecialOperators.PRIMO.value:
                             if len(valori) != 1:
-                                print(Fore.RED + f"Errore: PRIMO> richiede 1 parametro, ricevuti {len(valori)}")
+                                write_error(f"Errore: PRIMO> richiede 1 parametro, ricevuti {len(valori)}")
                                 return None
                             ris = is_prime(int(float(valori[0])))
 
@@ -244,7 +248,7 @@ def gestisciOperatoreSpeciale(expr : list[str], variabili : dict) -> list[str] |
                     i -= 1
                 
                 except (ValueError, IndexError) as e:
-                    print(Fore.RED + f"Errore nel parsing dell'operatore speciale: {str(e)}")
+                    write_error(f"Errore nel parsing dell'operatore speciale: {str(e)}")
                     return None
             else:
                 return None
@@ -274,7 +278,7 @@ def gestisciOperatoreSpeciale(expr : list[str], variabili : dict) -> list[str] |
                 if is_number(expr[i-1]):
                     n = floor(float(expr[i-1]))
                     if n < 0:
-                        print(Fore.RED + "Errore: fattoriale non definito per numeri negativi.")
+                        write_error("Errore: fattoriale non definito per numeri negativi.")
                         return None
                     ris = factorial(n)
                     
@@ -314,7 +318,7 @@ def processaEspressione(expr : list[str], variabili : dict) -> float | None:
     if not expr:
         return None
 
-    # caso in cui c'è assegnamento (x = 5)
+    # caso in cui c'Ã¨ assegnamento (x = 5)
     if isinstance(expr,float):
         return expr
         
@@ -322,16 +326,17 @@ def processaEspressione(expr : list[str], variabili : dict) -> float | None:
         nome_variabile = expr[0]
 
         if expr[1] != '=':
-            print(Fore.RED + "Espressione non valida: formato assegnamento errato.")
+            write_error("Espressione non valida: formato assegnamento errato.")
             return None
     
         if not validaNomeVariabile(nome_variabile):
-            print(Fore.RED + "Nome variabile non valido.")
+            write_error("Nome variabile non valido.")
             return None
         
         valore = processaEspressione(expr[2:], variabili)
         if valore is not None:
             variabili[nome_variabile] = valore
+            write_variabili(variabili)
         return valore
     
     # caso in cui ci sono variabili
@@ -339,11 +344,11 @@ def processaEspressione(expr : list[str], variabili : dict) -> float | None:
         try:
             expr = convertiVariabili(expr, variabili)
             if expr is None:
-                print(Fore.RED + "Espressione non valida: variabile non definita.")
+                write_error("Espressione non valida: variabile non definita.")
                 return None
             return processaEspressione(expr, variabili)
         except InvalidVariableError as e:
-            print(Fore.RED + str(e))
+            write_error(str(e))
             return None
     
     elif ciSonoOperatoriSpeciali(expr):
@@ -355,28 +360,28 @@ def processaEspressione(expr : list[str], variabili : dict) -> float | None:
             return None
         return ris
         
-    # caso in cui è un espressione normale
+    # caso in cui Ã¨ un espressione normale
     else:
         try:
             valore = safe_eval("".join([str(token) for token in expr]))
             if valore is not None and is_number(str(valore)):
                 return valore
             else:
-                print(Fore.RED + "Espressione non valida: formattazione scorretta o operazione non supportata.")
+                write_error("Espressione non valida: formattazione scorretta o operazione non supportata.")
                 return None
         except Exception as e:
-            print(Fore.RED + f"Espressione non valida: {str(e)}")
+            write_error(f"Espressione non valida: {str(e)}")
             return None
 
 def show(variabili : dict) -> None:
     if not variabili:
-        print(Fore.YELLOW + "Nessuna variabile definita.")
+        write_output("Nessuna variabile definita.")
     else:
-        print(Fore.CYAN + "\n--- Variabili Definite ---")
+        write_output("\n--- Variabili Definite ---")
         for k, v in variabili.items():
-            print(Fore.CYAN + f"{k} = " + Fore.WHITE + f"{v}")
-        print()
-    input("Premi INVIO per continuare...")
+            write_output(f"{k} = " + f"{v}")
+        write_output("")
+    wait_user_input("Premi INVIO per continuare...")
 
 
 def evaluateWithParentheses(expr : list[str], variabili : dict) -> float | None:
@@ -396,7 +401,7 @@ def evaluateWithParentheses(expr : list[str], variabili : dict) -> float | None:
             if ris is not None:
                 stack[-1] = str(ris)  # Sostituisco '(' con il risultato
             else:
-                print(Fore.RED + "Errore nella valutazione della sottospressione.")
+                write_error("Errore nella valutazione della sottospressione.")
                 return None
         else:
             stack.append(token)
@@ -406,16 +411,22 @@ def evaluateWithParentheses(expr : list[str], variabili : dict) -> float | None:
 def controlloExpr(expr : str, variabili : dict):
     # controllo se espressione in formato giusto
     expr_debug = expr
+    expr = togliCommenti(expr)
+    expr = togliSpazi(expr)
+    if not expr:
+        write_error("Espressione vuota.")
+        return None
+
     # caso in cui sia un define funzione
     if expr.startswith(Config.CustomFuncs.DEF.value):
         expr = expr.split(Config.FUNC_DEVIDER)
         if len(expr) != 4:
-            print(Fore.RED + f"Errore hai passato {len(expr)} argomenti alla definizione di una funzione invece di 4.")
+            write_error(f"Errore hai passato {len(expr)} argomenti alla definizione di una funzione invece di 4.")
             return None
         
         nome = togliSpazi(expr[1])
         if not validaNomeVariabile(nome) and nome not in variabili:
-            print(Fore.RED + f"ERRORE: {nome} nome non valido")
+            write_error(f"ERRORE: {nome} nome non valido")
             return None
         
         args = []
@@ -427,7 +438,7 @@ def controlloExpr(expr : str, variabili : dict):
             if validaNomeVariabile(a) and a != nome:
                 args.append(a)
             else:
-                print(Fore.RED + f"Errore: {a} non valido come nome parametro funzione")
+                write_error(f"Errore: {a} non valido come nome parametro funzione")
                 return None
         logica = togliSpazi(expr[3])
         f = Function(nome,args,logica)
@@ -446,21 +457,22 @@ def controlloExpr(expr : str, variabili : dict):
 
         if ris is not None:
             variabili[Config.RIS_PRECEDENTE] = ris
-            print(Fore.GREEN + "Risultato: " + Fore.WHITE + str(ris))
+            write_variabili(variabili)
+            write_output("Risultato: " + str(ris))
             return ris
         else:
-            print(Fore.RED + f"ERRORE in espressione: {expr_debug}")
-            print(Fore.RED + "Espressione non valida.")
-            input("premi per continuare...")
+            write_error(f"ERRORE in espressione: {expr_debug}")
+            write_error("Espressione non valida.")
+            wait_user_input("premi per continuare...")
     
     except InvalidExpressionError as e:
-        print(Fore.RED + f"ERRORE in espressione: {expr_debug}")
-        print(Fore.RED + f"Errore nell'espressione: {str(e)}")
-        input("premi per continuare...")
+        write_error(f"ERRORE in espressione: {expr_debug}")
+        write_error(f"Errore nell'espressione: {str(e)}")
+        wait_user_input("premi per continuare...")
     except Exception as e:
-        print(Fore.RED + f"ERRORE in espressione: {expr_debug}")
-        print(Fore.RED + f"Errore inaspettato: {str(e)}")
-        input("premi per continuare...")
+        write_error(f"ERRORE in espressione: {expr_debug}")
+        write_error(f"Errore inaspettato: {str(e)}")
+        wait_user_input("premi per continuare...")
 
 
 def processaFile(file : str, variabili : dict):
@@ -476,162 +488,6 @@ def processaFile(file : str, variabili : dict):
             if riga:
                 controlloExpr(riga,variabili)
            
-
-def espressionLoop() -> None:
-    variabili = dict()
-    # costnati 
-    variabili[Config.PI] = pi
-    FUNZIONI.clear()
-
-    while True:
-        clear()
-        espressioniHeader()
-        expr = input("espressione: ")
-        expr = togliSpazi(expr)
-        if not expr:
-            continue
-        
-        elif expr == Config.CustomFuncs.ESCI.value:
-            break
-
-        elif expr == Config.CustomFuncs.SHOW.value:
-            show(variabili)
-            continue
-        
-        elif expr == Config.CustomFuncs.PWD.value:
-            os.system("pwd")
-            input()
-            continue
-
-        elif expr == Config.CustomFuncs.SALVA.value:
-            salvaSessione(variabili)
-            input()
-            continue
-
-        elif expr == Config.CustomFuncs.LIST.value:
-            path = input(Fore.CYAN + "Path sessioni: ")
-            path = togliSpazi(path)
-            if path:
-                listSessioni(path)
-            else:
-                listSessioni()
-            input()
-            continue
-
-        elif expr == Config.CustomFuncs.KRAMER.value:
-            inp = KramerInput(variabili)
-            if inp is None:
-                print(Fore.RED + "Errore nel parsing di variabili")
-                input()
-                continue
-            ris = Kramer3x3(inp)
-            if ris is not None:
-                x, y, z = ris
-                variabili['x'] = x
-                variabili['y'] = y
-                variabili['z'] = z
-                print(Fore.GREEN + f"Soluzioni salvate: x={x}, y={y}, z={z}")
-            continue
-
-        elif expr == Config.CustomFuncs.DEF.value:
-            f = newFunction(variabili)
-            if f is not None:
-                FUNZIONI[f.nome] = f
-            input("Premi per continuare...")
-            continue
-
-        elif expr == Config.CustomFuncs.SHOW_FUNCTIONS.value:
-            showFuncs(FUNZIONI)
-            continue
-
-        elif expr == Config.CustomFuncs.PULISCI.value:
-            variabili.clear()
-            print(Fore.YELLOW + "Variabili cancellate.")
-            input()
-            continue
-
-        elif expr == Config.CustomFuncs.HELP.value:
-            helpLoop()
-            continue
-
-        elif expr == Config.CustomFuncs.LEGGI.value:
-            file = input(Fore.CYAN + "Path File: ")
-            processaFile(file,variabili)
-            continue
-
-        elif expr == Config.CustomFuncs.LEN.value:
-            stringa = input("Stringa: ")
-            ris = len(stringa)
-            variabili[Config.RIS_PRECEDENTE] = ris
-            print(Fore.GREEN + "Risultato: " + Fore.WHITE + str(ris))
-            input()
-            continue
-
-        elif expr == Config.CustomFuncs.FATTORI.value:
-            try:
-                n = input("numero: ")
-                n = processaEspressione(tokenize(n), variabili)
-                n = floor(n)
-            except Exception as e:
-                print(Fore.RED + f"Numero non inserito: {str(e)}")
-                input()
-                continue
-            ris = list(factor(n))
-            print(Fore.GREEN + "Risultato: " + Fore.WHITE + str(ris))
-            input()
-            continue
-
-        elif expr == Config.CustomFuncs.DIVISORI.value:
-            try:
-                n = input("numero: ")
-                n = processaEspressione(tokenize(n), variabili)
-                n = floor(n)
-            except Exception as e:
-                print(Fore.RED + f"Numero non inserito: {str(e)}")
-                input()
-                continue
-            ris = divisori(n)
-            print(Fore.GREEN + "Risultato: " + Fore.WHITE + str(ris))
-            input()
-            continue
-
-        elif expr == Config.CustomFuncs.COMBINAZIONI.value:
-            try:
-                n = input("elementi totali: ")
-                n = processaEspressione(tokenize(n), variabili)
-                n = floor(n)
-                y = input("numero elementi da scegliere: ")
-                y = processaEspressione(tokenize(y), variabili)
-                y = floor(y)
-            except Exception as e:
-                print(Fore.RED + f"Numero non inserito: {str(e)}")
-                input()
-                continue
-            ris = nCr(n,y)
-            print(Fore.GREEN + "Risultato: " + Fore.WHITE + str(ris))
-            input()
-            continue
-
-        elif expr == Config.CustomFuncs.PERMUTAZIONI.value:
-            try:
-                n = input("elementi totali: ")
-                n = processaEspressione(tokenize(n), variabili)
-                n = floor(n)
-                y = input("numero elementi da scegliere: ")
-                y = processaEspressione(tokenize(y), variabili)
-                y = floor(y)
-            except Exception as e:
-                print(Fore.RED + f"Numero non inserito: {str(e)}")
-                input()
-                continue
-            ris = nPr(n,y)
-            print(Fore.GREEN + "Risultato: " + Fore.WHITE + str(ris))
-            input()
-            continue
-
-        controlloExpr(expr,variabili)
-
-        input()
 
 
 

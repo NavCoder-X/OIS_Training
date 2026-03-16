@@ -1,37 +1,33 @@
-from colorama import Fore, Style, init
-from src.Headers import *
-from src.operatori import *
-from src.espressioni import espressionLoop
-from src.boleanParser import *
+import os
+import sys
 
-init(autoreset=True)
- 
-def main():
-    while True:
-        clear()
-        menu()
-        scelta = input(Fore.WHITE + "Opzione: ")
-        if(scelta.isdigit()):
-            scelta = int(scelta)
-        else:
-            continue
+# Fix per Textual + PyInstaller --onefile su Windows:
+# gli handle stdin/stdout vengono sostituiti con oggetti senza fileno(),
+# causando un crash al primo keypress nel Windows console driver.
+if getattr(sys, 'frozen', False) and sys.platform == 'win32':
+    try:
+        sys.stdin  = open('CONIN$',  'r', encoding='utf-8', errors='replace')
+        sys.stdout = open('CONOUT$', 'w', encoding='utf-8', errors='replace')
+        sys.stderr = open('CONOUT$', 'w', encoding='utf-8', errors='replace')
+    except Exception:
+        pass
 
-        match scelta:
-            case 1:
-                espressionLoop()
-                
-            case 2:
-                Kramer3x3(None)
+# In frozen --onefile, __file__ punta alla cartella temp di estrazione (sys._MEIPASS).
+# I file dati (variabili.txt, error.txt, output.txt) vanno scritti accanto all'exe.
+if getattr(sys, 'frozen', False):
+    PROJECT_ROOT = os.path.dirname(sys.executable)
+else:
+    PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
-            case 3:
-                boolLoop()
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 
-            case 4:
-                helpLoop()
+from Tui.Tui import SelectingApp
 
-            case 5:
-                break
+
+def main() -> None:
+    SelectingApp().run()
 
 
 if __name__ == "__main__":
-    main()  
+    main()
